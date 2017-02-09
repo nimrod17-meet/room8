@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block title %}Tenants{% endblock %}
+{% block body %}
+
+<div class="tenants">
+	{% for item in items %}
+   	<a href={{url_for('tenant', tenant_id = item.id)}}>
+      	<p>{{item.name}}</p>
+      	<p>{{item.sex}}</p>
+      	<p>{{item.work}}</p>
+      	<p>{{item.age}}</p>
+      	<img src={{item.photo}} height="250" >
+  	</a>
+  	{% endfor %}
+</div>
+{% endblock %}

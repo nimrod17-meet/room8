@@ -18,14 +18,15 @@ Base = declarative_base()
 #     product = relationship("Product", back_populates="inventory")
 
 
-class Member(Base):
-    __tablename__ = 'member'
+class Customer(Base):
+    __tablename__ = 'customer'
     id = Column(Integer, primary_key=True)
     name = Column(String(255))
     address = Column(String(255))
     email = Column(String(255), unique=True)
     password_hash = Column(String(255))
-    apartment = relationship("Apartment", back_populates="owner")
+    apartments = relationship("Apartment", back_populates="owner")
+    phoneNumber = Column(Integer)
 
     def hash_password(self, password):
         self.password_hash = pwd_context.encrypt(password)
@@ -36,6 +37,15 @@ class Member(Base):
     def verify_password(self, password):
         return pwd_context.verify(password, self.password_hash)
 
+class Tenant(Base):
+    __tablename__ = 'tenant'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(255))
+    sex = Column(String(255))
+    work = Column(String(255), unique=True)
+    age = Column(Integer)
+    intrests = Column(String(200))
+    photo = Column(String)
 
 
 
@@ -44,12 +54,14 @@ class Member(Base):
 class Apartment(Base):
     __tablename__ = 'apartment'
     id = Column(Integer, primary_key=True)
-    name = Column(String(200))
     description = Column(String(200))
-    photo = Column(String(200))
-    price = Column(Integer)
+    photo = Column(String)
+    price = Column(Integer())
+    address = Column(String(200))
     phoneNumber = Column(Integer)
-    owner = relationship("Member", back_populates="apartment")
+    tenantNum = Column(Integer)
+    owner = relationship("Customer", back_populates="apartment")
+    owner_id = Column(Integer, ForeignKey('customer.id'), primary_key=True)
     #inventory = relationship("Inventory", uselist=False, back_populates="product")
     
 

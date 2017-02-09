@@ -6,10 +6,12 @@
 <p> There are currently no items in the catalog. </p>
 
 {% else %}
-<div class="product">
+<div class="apartments">
 	{% for item in items %}
-   	<a href={{url_for('product', product_id = item.id)}}>
+   	<a href={{url_for('apartment', apartment_id = item.id)}}>
       	<p>{{item.name}}</p>
+      	<p>{{item.price}}</p>
+      	<p>{{item.address}}</p>
       	<img src={{item.photo}} height="250" >
   	</a>
   	{% endfor %}
