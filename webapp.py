@@ -29,10 +29,15 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route('/')
-@app.route('/inventory')
-def inventory():
+@app.route('/home')
+def home():
 	items = session.query(Apartment).all()
-	return render_template('inventory.html', items=items)
+	return render_template('home.html', items=items)
+
+@app.route('/apartments')
+def apartments():
+	items = session.query(Apartment).all()
+	return render_template('apartments.html', items=items)
 
 def verify_password(email, password):
 	customer = session.query(Customer).filter_by(email=email).first()
@@ -65,7 +70,7 @@ def login():
 			login_session['name'] = customer.name
 			login_session['email'] = customer.email
 			login_session['id'] = customer.id
-			return redirect(url_for('inventory'))
+			return redirect(url_for('home'))
 		else:
 			# incorrect username/password
 			flash('Incorrect username/password combination')
@@ -73,78 +78,65 @@ def login():
 
 @app.route('/newCustomer', methods = ['GET','POST'])
 def newCustomer():
-    if request.method == 'POST':
+    if  request.method == 'POST':
         name = request.form['name']
         email = request.form['email']
         password = request.form['password']
-        address = request.form['address']
-        if name is None or email is None or password is None or 'file' not in request.files:
+        phoneNumber = request.form['phoneNumber']
+
+        if name is None or email is None or password is None :
             flash("Your form is missing arguments")
             return redirect(url_for('newCustomer'))
-        file = request.files['file']
-        if file.filename == '':
-            flash('No selected file')
-            return redirect(url_for('newCustomer'))
+        
+        
         if session.query(Customer).filter_by(email = email).first() is not None:
             flash("A user with this email address already exists")
             return redirect(url_for('newCustomer'))
-        if file and allowed_file(file.filename):
-            customer = Customer(name = name, email=email, address = address)
-            customer.hash_password(password)
-            session.add(customer)
-            session.commit()
-            filename = str(customer.id) + "_" + secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            customer.set_photo(filename)
-            session.add(customer)
-            shoppingCart = ShoppingCart(customer=customer)
-            session.add(shoppingCart)
-            session.commit()
-            flash("User Created Successfully!")
-            return redirect(url_for('inventory'))
-        else:
-        	flash("Please upload either a .jpg, .jpeg, .png, or .gif file.")
-        	return redirect(url_for('newCustomer'))
+        customer = Customer(name=name, email=email, phoneNumber=phoneNumber)
+        customer.hash_password(password)
+        session.add(customer)
+        session.commit()
+        flash("User Created Successfully!")
+        return redirect(url_for('home'))
+    
     else:
         return render_template('newCustomer.html')
 
 @app.route('/addApartment', methods = ['GET','POST'])
 def addApartment():
+    if 'id' not in login_session:
+        flash("You must be logged in for this page")
+        return redirect(url_for('login'))
     if request.method == 'POST':
         address = request.form['address']
         description = request.form['description']
         price = request.form['price']
         tenantNum = request.form['tenantNum']
         #photo
-        if name is None or email is None or password is None or 'file' not in request.files:
+        if address is None or description is None or price is None or tenantNum is None :
+
             flash("Your form is missing arguments")
-            return redirect(url_for('newCustomer'))
-        file = request.files['file']
-        if file.filename == '':
-            flash('No selected file')
-            return redirect(url_for('newCustomer'))
-        if session.query(Customer).filter_by(email = email).first() is not None:
-            flash("A user with this email address already exists")
-            return redirect(url_for('newCustomer'))
-        if file and allowed_file(file.filename):
-            customer = Customer(name = name, email=email, address = address)
-            customer.hash_password(password)
-            session.add(customer)
-            session.commit()
-            filename = str(customer.id) + "_" + secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            customer.set_photo(filename)
-            session.add(customer)
-            shoppingCart = ShoppingCart(customer=customer)
-            session.add(shoppingCart)
-            session.commit()
-            flash("User Created Successfully!")
-            return redirect(url_for('inventory'))
-        else:
-        	flash("Please upload either a .jpg, .jpeg, .png, or .gif file.")
-        	return redirect(url_for('newCustomer'))
+            
+            return redirect(url_for('addApartment'))
+        apartment = Apartment(description=description, price=price, tenantNum=tenantNum, address = address)
+        session.add(apartment)
+        session.commit()
+        if 'file' in request.files:
+            file = request.files['file']
+        #if file.filename == '':
+         #   flash('No selected file')
+          #  return redirect(url_for('addApartment'))
+           
+            if file and allowed_file(file.filename):
+                filename = str(apartment.id) + "_" + secure_filename(file.filename)
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                apartment.set_photo(filename)
+                session.add(apartment)
+                session.commit()
+            flash("Apartment added Successfully!")
+            return redirect(url_for('home'))
     else:
-        return render_template('newCustomer.html')
+        return render_template('addApartment.html')
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
@@ -169,7 +161,7 @@ def logout():
 	del login_session['email']
 	del login_session['id']
 	flash("Logged Out Successfully")
-	return redirect(url_for('inventory'))
+	return redirect(url_for('home'))
 
 if __name__ == '__main__':
 	app.run(debug=True)

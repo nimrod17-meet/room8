@@ -1,8 +1,18 @@
 {% extends "layout.html" %}
-{% block title %}Add a Room{% endblock %}
+{% block title %}New Room{% endblock %}
+
 {% block body %}
-
-
-
-
+<form action="{{ url_for('addApartment') }}" method = 'post' enctype=multipart/form-data>
+  Address:<br>
+  <input type="text" name="address"><br>
+  Price:<br>
+  <input type="text" name="price"><br>
+  Descripyion:<br>
+  <input type="text" name="description"><br>
+  Tenant number:<br>
+  <input type="text" name="tenantNum"><br>
+  Image:<br>
+	<input type=file name=file><br>
+  <input type="submit" value="Add a Room">
+</form>
 {% endblock %}

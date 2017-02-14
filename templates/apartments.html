@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% block title %}Apartments{% endblock %}
+{% block body %}
+<!---SHOW All items-->
+{% if items==[]%}
+<p> There are currently no apartments in the catalog. </p>
+
+{% else %}
+<div class="apartments">
+	{% for item in items %}
+   	<a href={{url_for('apartment', apartment_id = item.id)}}>
+      	<p>{{item.name}}</p>
+      	<p>{{item.price}}</p>
+      	<p>{{item.address}}</p>
+      	<img src={{item.photo}} height="250" >
+  	</a>
+  	{% endfor %}
+</div>
+
+{% endif %}
+{% endblock %}
