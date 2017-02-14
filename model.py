@@ -60,7 +60,7 @@ class Apartment(Base):
     address = Column(String(200))
     phoneNumber = Column(Integer)
     tenantNum = Column(Integer)
-    owner = relationship("Customer", back_populates="apartment")
+    owner = relationship("Customer", back_populates="apartments")
     owner_id = Column(Integer, ForeignKey('customer.id'), primary_key=True)
     #inventory = relationship("Inventory", uselist=False, back_populates="product")
     

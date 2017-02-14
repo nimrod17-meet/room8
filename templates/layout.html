@@ -6,7 +6,7 @@
 	<h2>{% block title %}{% endblock %}</h2>
   	<div class=metanav>
 		<div class="g-signin2" data-onsuccess="onSignIn"></div>
-		<a href="{{ url_for('inventory') }}">Home</a> || <a href="{{ url_for('login') }}">log in</a> || <a href="{{ url_for('logout') }}">log out</a> || <a href="{{ url_for('addRoom') }}">Add a Room</a>
+		<a href="{{ url_for('inventory') }}">Home</a> || <a href="{{ url_for('login') }}">log in</a> || <a href="{{ url_for('logout') }}">log out</a> || <a href="{{ url_for('addApartment') }}">Add a Room</a>
   	</div>
 	{% for message in get_flashed_messages() %}
 	<div class=flash>{{ message }}</div>

@@ -19,7 +19,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # )
 # app.register_blueprint(blueprint, url_prefix="/login")
 
-engine = create_engine('sqlite:///fizzBuzz.db')
+engine = create_engine('sqlite:///room8.db')
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine, autoflush=False)
 session = DBSession()
